@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jul 14 13:26:04 2014
+
+@author: tdoughty1
+"""
+
 # Import Standard libraries
 from os.path import isfile
 
@@ -5,9 +12,59 @@ from os.path import isfile
 import rootpy.io as rpi
 
 class FileInfo(object):
+    ''' Class for a root file mapping information.
     
-    def __init__(self, dataList=None, cutList=None):
+        This class is created during the startup of a CAPy session.  It holds
+        a list of file names, root directory names and tree name for all the of
+        the cuts and RQs.  Specifically which detector numbers occur for each RQ
+        in each file.
         
+        Called:
+            fileNameList, dirNameList, treeNameList = FileInfo(dataname, detnum)
+        
+            Inputs:
+                dataname: (str) - Name of rq or cut to be loaded.
+                detnum: (int) - Detector number to be loaded (1 for event data 
+                    or cut, ie. EventNumber).
+        
+            Outputs:
+                fileNameList: (list) - Names of files to be loaded for input 
+                    detnum and dataname.
+                dirNameList: (list) - Names of root file directories to be 
+                    loaded.
+                treeNameList: (list) - Names of root trees to load data from.
+
+        Constructed:
+            FileInfo(dataFileList, cutFileList)
+            
+            Parameters:
+                dataFileList: (list) - All data files to be studied in this 
+                    session.
+                cutFileList: (list) - All cut files to be studied in this 
+                    session.
+
+        Methods:
+            AddDataFiles: Add one or more data files to current session.
+            AddCutFiles: Add one or more cut files to current session.
+
+        Attributes:
+            _dataList: (list) - All the datafiles included in the current 
+                session.
+            _dataInfo (dict) - dict of the lists corresponding to every data 
+                branch found in any datafile and the detector numbers which 
+                correspond to that RQ. Multilevel dict keyed first by data
+                name, then by detector number. 
+            _cutList: (list) - All the cutfiles in the current session.
+            _cutInfo: (dict) - Contains lists corresponding to every 
+                available cut and corresponding detectors.  Multilevel dict
+                keyed first by cut name, then by detector number. 
+    '''
+
+    def __init__(self, dataList=None, cutList=None):
+        ''' Constructs a file information object from a datalist and/or cutlist.
+
+        '''
+            
         # RQ structure is a list of files and 
         # dict of file lists mapped to RQ/detnum combinations
         self._dataList = []
@@ -27,7 +84,7 @@ class FileInfo(object):
             self.AddCutFiles(cutList)
     
     def __call__(self, RQName, detnum):
-        
+
         # Check if request is for data
         if RQName in self._dataInfo:
             setDetInfo = self._dataInfo[RQName]
@@ -54,16 +111,22 @@ class FileInfo(object):
 
     ######### 'Public' Methods ###########
     def AddDataFiles(self, fNames):
+        '''
+        
+        '''
         self._AddFiles(fNames, 'Data')
 
     def AddCutFiles(self, fNames):
-        self._AddFiles(fNames, 'Cut')
+        '''
         
-    def SwitchCutList(self, dirName):
-        pass
+        '''
+        self._AddFiles(fNames, 'Cut')
 
     ######### 'Hidden' Methods ###########
     def _AddFiles(self, fNames, fType):
+        '''
+        
+        '''
 
         # if fNames is single name, put into into a list
         if isinstance(fNames, str):
@@ -104,7 +167,12 @@ class FileInfo(object):
             self._MapFile(fName, fType)
 
     def _MapFile(self, fName, fType):
+        '''
         
+        '''
+        
+        # Temporary for debugging
+        # TODO: switch to a verbose flag
         print fName
 
         # Get list of directories in files that we don't use
