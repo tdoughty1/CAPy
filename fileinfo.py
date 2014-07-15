@@ -13,7 +13,7 @@ This object can then be asked to simplify the data loading process.
 Classes: 
     FileInfo - Structure to hold root file mapping information.
 
-Created on Tue Jul 14 13:26:04 2014 
+Created on Mon Jul 14 13:26:04 2014 
 Based on root_GetDir from cdmstools
 
 @author: tdoughty1
