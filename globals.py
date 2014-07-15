@@ -1,23 +1,26 @@
 # -*- coding: utf-8 -*-
 """
+globals. py
+
 Module to keep track CAPy session settings.
 
-    Attributes:
-        _FileInfo (FileInfo) - Structure containing list of root files and 
-            branches with detector numbers mapped to the corresponding file,
-            directory, and tree names.
-        _Detnums (list) - All the valid detector numbers.
-        _LastDetnum (int) - Detector number used last time a data function was 
-            called.  Allows simplification of data function call. Similar to
-            CAP_last_detnum
-        _LastCut (cut) - Detector number used last time a cut function was 
-            called. Allows simplification of data function call.
+Attributes:
+    _FileInfo (FileInfo) - Structure containing list of root files and branches
+        with detector numbers mapped to the corresponding file, directory, and
+        tree names.
+    _Detnums (list) - All the valid detector numbers.
+    _LastDetnum (int) - Detector number used last time a data function was 
+        called.  Allows simplification of data function call. Similar to
+        CAP_last_detnum.
+    _LastCut (cut) - Detector number used last time a cut function was 
+        called. Allows simplification of data function call. Similar to 
+        CAP_last_cut.
 
-    Functions:
-        Set_LastDetnum: Store the last detector number called.
-        Get_LastDetnum: Return the last detector number called.
-        Set_LastCut: Store the last cut called.
-        Get_LastCut: Return the last cut called.
+Functions:
+    Set_LastDetnum: Store the last detector number called.
+    Get_LastDetnum: Return the last detector number called.
+    Set_LastCut: Store the last cut called.
+    Get_LastCut: Return the last cut called.
 
 Created on Tue Nov  5 14:19:11 2013
 
