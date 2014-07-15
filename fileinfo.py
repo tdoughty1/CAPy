@@ -1,6 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jul 14 13:26:04 2014
+fileinfo.py
+
+CAPy module for the FileInfo class.
+
+An object of the FileInfo should be created with every CAPy session.  One of the
+challenges in loading ROOT data is that many files have a different set of RQs
+(primarily due to CDMSlite).  The solution is to map each file and get a list
+of branch names as well as the detector numbers and files that have those files.
+This object can then be asked to simplify the data loading process.
+
+Classes: 
+    FileInfo - Structure to hold root file mapping information.
+
+Created on Tue Jul 14 13:26:04 2014 
+Based on root_GetDir from cdmstools
 
 @author: tdoughty1
 """
@@ -47,6 +61,14 @@ class FileInfo(object):
             AddDataFiles: Add one or more data files to current session.
             AddCutFiles: Add one or more cut files to current session.
 
+
+        Hidden Methods:
+            _AddFiles: Called by AddDataFiles and AddCutFiles, checks files
+                existence, then add file to appropriate file list and calls
+                _MapFile.
+            _MapFile: Called by _AddFiles, loads root file and gets map of
+                directory and tree names for use in loading data.
+
         Attributes:
             _dataList: (list) - All the datafiles included in the current 
                 session.
@@ -62,7 +84,12 @@ class FileInfo(object):
 
     def __init__(self, dataList=None, cutList=None):
         ''' Constructs a file information object from a datalist and/or cutlist.
-
+            
+            Parameters:
+                dataList: (list or str) - Filenames  of data files to be added
+                    to CAPy session.
+                cutList: (list or str) - Filenames of cut files to be added to 
+                    Capy session. (optional)
         '''
             
         # RQ structure is a list of files and 
@@ -83,25 +110,42 @@ class FileInfo(object):
         if cutList:
             self.AddCutFiles(cutList)
     
-    def __call__(self, RQName, detnum):
+    def __call__(self, dataName, detnum):
+        ''' Accesses the list of files for a data value and detector number.
+        
+            Parameters:
+                dataName: (str) - Name of cut or data value to get information
+                detnum: (int) - Detector number (1 = general)
+            
+            Returns: (filePath, dirName, treeName)
+                filePath: (list) - All files where detnum has data value
+                dirName: (list) - Directories for detnum and branch.
+                treeName: (list) - Trees for detnum and branch.
+                
+            Raises:
+                ValueError
+                
+            #TODO - Switch to single dirName/treeName value?
+        '''
 
         # Check if request is for data
-        if RQName in self._dataInfo:
-            setDetInfo = self._dataInfo[RQName]
+        if dataName in self._dataInfo:
+            setDetInfo = self._dataInfo[dataName]
 
         # Otherwise it should be a cut
-        elif RQName in self._cutList:
-            setDetInfo = self._cutList[RQName]
+        elif dataName in self._cutList:
+            setDetInfo = self._cutList[dataName]
         
         # This means its neither a cut or data
         else:
-            raise ValueError('ERROR in FileInfo:\n' +\
-                             RQName + ' is not in data or cut files!')
+            raise ValueError('ERROR in FileInfo:\n' +
+                             dataName + ' is not in data or cut files!')
 
         # Check if detector number in dict
         if detnum not in setDetInfo:
-            raise ValueError('ERROR in FileInfo:\n' +\
-                             'Detnum: ' + str(detnum) + ' has no data for + ' + RQName + '!')
+            raise ValueError('ERROR in FileInfo:\n' +
+                             'Detnum: ' + str(detnum) + 
+                             ' has no data for + ' + dataName + '!')
             return None
         else:
             filePath = setDetInfo[detnum]['File']
@@ -110,22 +154,46 @@ class FileInfo(object):
             return (filePath, dirName, treeName)
 
     ######### 'Public' Methods ###########
-    def AddDataFiles(self, fNames):
+    def AddDataFiles(self, dataNames):
+        ''' Add a data file or list of files to the current session.
+        
+            Parameter:
+                dataNames: (list or str) - Root data file(s) to be added to the 
+                    current CAPy session.
         '''
         
-        '''
-        self._AddFiles(fNames, 'Data')
+        self._AddFiles(dataNames, 'Data')
 
-    def AddCutFiles(self, fNames):
-        '''
+    def AddCutFiles(self, cutNames):
+        ''' Add a cut file or list of files to the current session.
         
+            Parameter:
+                cutNames: (list or str) - Root cut file(s) to be added to the 
+                    current CAPy session.
         '''
-        self._AddFiles(fNames, 'Cut')
+
+        self._AddFiles(cutNames, 'Cut')
 
     ######### 'Hidden' Methods ###########
     def _AddFiles(self, fNames, fType):
-        '''
+        ''' Add root files to the current session.
         
+            Checks that every file is a valid root file, stores filename in the
+            appropriate file list, then passes the file name and file info dict
+            to _MapFile.
+        
+            Called by both AddDataFiles and AddCutFiles with appropriate flag.
+            
+            Parameters:
+                fNames: (list, str) - Root file(s) to be added to the current
+                    CAPy session.
+                fType: (str) - Either 'Data' or 'Cut' to select list to which to
+                    add file(s).
+
+            Raises:
+                TypeError: If fNames is not a list or str.
+                ValueError: If fType is neither 'Data' nor 'Cut'.
+                IOError: If a file in fNames doesn't exist.
         '''
 
         # if fNames is single name, put into into a list
@@ -134,8 +202,9 @@ class FileInfo(object):
         elif isinstance(fNames, list):
             pass
         else:
-            raise TypeError('ERROR in FileInfo.Add' + fType + 'Files:\n' + \
-                            'Input files should be a list of files or a single file name!')
+            raise TypeError('ERROR in FileInfo.Add' + fType + 'Files:\n' +
+                            'Input files should be a list of files or a ' +
+                            ' single file name!')
         
         # Select which list to add files
         if fType == 'Data':
@@ -143,8 +212,8 @@ class FileInfo(object):
         elif fType == 'Cut':
             setList = self._cutList
         else:
-            raise ValueError('ERROR in FileInfo.Add' + fType + 'Files:\n' + \
-                             'Unknown file type ' + fType + ' added to list!\n' + \
+            raise ValueError('ERROR in FileInfo.Add' + fType + 'Files:\n' + 
+                             'Unknown file type ' + fType + ' added!\n' + 
                              "Should be 'cut' or 'data'!")
         
         # Loop through all files in input list
@@ -156,7 +225,7 @@ class FileInfo(object):
             
             # Check if file exists
             if not isfile(fName):
-                raise IOError('ERROR in FileInfo.Add' + fType + 'Files:\n' + \
+                raise IOError('ERROR in FileInfo.Add' + fType + 'Files:\n' +
                               'File ' + fName + " doesn't exist!")
                 continue
             
@@ -167,8 +236,13 @@ class FileInfo(object):
             self._MapFile(fName, fType)
 
     def _MapFile(self, fName, fType):
-        '''
+        ''' Get branch names for each file and store corresponding file, 
+            directory, and tree names, as well as the appropriate detector 
+            number(s).
         
+            Parameters:
+                fName: (str) - Name of file to map.
+                fType: (str) - File type of fName: 'Cut' or 'Data'
         '''
         
         # Temporary for debugging
@@ -213,15 +287,17 @@ class FileInfo(object):
                         branchName = branch.GetName()
                         branch.Clear()
                 
-                        # Check if RQ is in the dict, if not, create an empty dict
+                        # Check if branch is in dict, if not create empty dict
                         if branchName not in fileInfo:
                             fileInfo[branchName] = {}        
     
-                        # Check if Detnum in RQ dict, if not create an empty list
+                        # Check if Detnum in dict, if not create empty lists
                         if detnum not in fileInfo[branchName]:
-                            fileInfo[branchName][detnum] = {'File': [], 'Dir': [], 'Tree': []}
+                            fileInfo[branchName][detnum] = {'File': [],
+                                                            'Dir': [],
+                                                            'Tree': []}
                 
-                        # Store Filename, directory, and tree for each detector and RQ combo
+                        # Store Filename, directory, and tree for each combo
                         fileInfo[branchName][detnum]['File'].append(fName)
                         fileInfo[branchName][detnum]['Dir'].append(dirName)
                         fileInfo[branchName][detnum]['Tree'].append(treeName)
