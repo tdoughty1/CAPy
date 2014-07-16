@@ -249,13 +249,16 @@ class FileInfo(object):
         # TODO: switch to a verbose flag
         print fName
 
-        # Get list of directories in files that we don't use
+        # List of directories in files that we don't use
         if fType == 'Data':
             skipDirs = ['calibInfoDir', 'infoDir', 'detectorConfigDir' ]
             fileInfo = self._dataInfo
         elif fType == 'Cut':
             skipDirs = ['cutInfoDir']
             fileInfo = self._cutInfo
+    
+        # Dict of branches copied between files and the directory to ignore
+        doubleBranches = {'SeriesNumber', 'EventNumber', 'DetType', 'Empty'}
     
         # Open root file
         with rpi.root_open(fName, 'r') as rootFile:
@@ -286,6 +289,12 @@ class FileInfo(object):
                 
                         branchName = branch.GetName()
                         branch.Clear()
+                
+                        # If branch is one of the ones in two different files,
+                        # choose data from calib file.
+                        if branchName in doubleBranches:
+                            if 'calib' not in treeName:
+                                continue
                 
                         # Check if branch is in dict, if not create empty dict
                         if branchName not in fileInfo:
