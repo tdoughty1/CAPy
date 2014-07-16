@@ -303,13 +303,23 @@ class FileInfo(object):
                         # Check if Detnum in dict, if not create empty lists
                         if detnum not in fileInfo[branchName]:
                             fileInfo[branchName][detnum] = {'File': [],
-                                                            'Dir': [],
-                                                            'Tree': []}
+                                                            'Dir': dirName,
+                                                            'Tree': treeName}
                 
-                        # Store Filename, directory, and tree for each combo
+                        # Store Filename for each combo
                         fileInfo[branchName][detnum]['File'].append(fName)
-                        fileInfo[branchName][detnum]['Dir'].append(dirName)
-                        fileInfo[branchName][detnum]['Tree'].append(treeName)
+                        
+                        # Check if treeName and dirName are the same
+                        if fileInfo[branchName][detnum]['Dir'] != dirName:
+                            raise ValueError('ERROR in _MapFile:\n' +
+                                             'Directory ' + dirName + ' does ' +
+                                             'not match the expected name: ' +
+                                             fileInfo[branchName][detnum]['Dir'])
+                        if fileInfo[branchName][detnum]['Tree'] != treeName:
+                            raise ValueError('ERROR in _MapFile:\n' +
+                                             'Directory ' + treeName + ' does ' +
+                                             'not match the expected name: ' +
+                                             fileInfo[branchName][detnum]['Tree'])
             
                     # Clear Tree #FIXME - still have memory leak
                     tree.Delete()
