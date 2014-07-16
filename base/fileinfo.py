@@ -106,6 +106,9 @@ class FileInfo(object):
         self._cutList = []
         self._cutInfo = {}
         
+        # A set of all detector numbers in the data
+        self._detnums = set()
+        
         # If datalist is given, map files and add into structures
         if dataList:
             self.AddDataFiles(dataList)
@@ -217,6 +220,10 @@ class FileInfo(object):
         else: 
             return False
 
+    def GetDetnums(self):
+        ''' Return list of detector numbers in current session files.'''
+        return self._detnums
+
     ######### 'Hidden' Methods ###########
     def _AddFiles(self, fNames, fType):
         ''' Add root files to the current session.
@@ -326,6 +333,9 @@ class FileInfo(object):
                     # Otherwise it's a general quantity (detnum = 1)
                     else:
                         detnum = 1
+
+                    # Add detnum to list
+                    self._detnums.add(detnum)
 
                     # Loop through branches on tree
                     for branch in tree.GetListOfBranches():
