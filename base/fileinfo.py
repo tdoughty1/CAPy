@@ -60,6 +60,10 @@ class FileInfo(object):
         Methods:
             AddDataFiles: Add one or more data files to current session.
             AddCutFiles: Add one or more cut files to current session.
+            GetDataNames: Return list of data names in current session.
+            GetCutNames: Return list of cut names in current session.
+            IsGeneral: Checks if the branch is general (true) or detector
+                specific (false).
 
 
         Hidden Methods:
@@ -173,6 +177,45 @@ class FileInfo(object):
         '''
 
         self._AddFiles(cutNames, 'Cut')
+    
+    def GetDataNames(self):
+        ''' Return list of data names in current session.'''
+        return self._DataInfo.keys()
+    
+    def GetCutNames(self):
+        ''' Return list of cut names in current session.'''
+        return self._CutInfo.keys()
+
+    def IsGeneral(self, name):
+        ''' Return true if it's a general value, otherwise false.
+        
+            Parameters:
+                name: (str) - Name of data or cut branch to check.
+            Raises:
+                TypeError: If name is not a string
+        '''
+        
+        # Check it's correct type
+        if not isinstance(name, str):
+            raise TypeError('ERROR in FileInfo.IsGeneral:\n' +
+                            'Input branch name must be a string!')
+        
+        # Check its a valid name
+        if name in self.GetDataNames():  # Data Branch name
+            tempDict = self._dataInfo[name]
+        elif name in self.GetCutNames():  # Cut Branch name
+            tempDict = self._cutInfo[name]
+        else:  # Not in any file
+            print "WARNING in FileInfo.IsGeneral:"
+            print "Input branch isn't in current session!"
+            print "No value returned!"
+            return None
+
+        # A general data or cut should have 1 as it's only key        
+        if len(tempDict.keys()) == 1 and 1 in tempDict:
+            return True
+        else: 
+            return False
 
     ######### 'Hidden' Methods ###########
     def _AddFiles(self, fNames, fType):

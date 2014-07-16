@@ -4,6 +4,14 @@ globals. py
 
 Module to keep track CAPy session settings.
 
+Functions:
+    Set_LastDetnum: Store the last detector number called.
+    Get_LastDetnum: Return the last detector number called.
+    Set_LastCut: Store the last cut called.
+    Get_LastCut: Return the last cut called.
+    GetDataNames: Return list of data branches in current session
+    GetCutNames: Return list of cut branches in current session
+
 Attributes:
     _FileInfo (FileInfo) - Structure containing list of root files and branches
         with detector numbers mapped to the corresponding file, directory, and
@@ -16,23 +24,19 @@ Attributes:
         called. Allows simplification of data function call. Similar to 
         CAP_last_cut.
 
-Functions:
-    Set_LastDetnum: Store the last detector number called.
-    Get_LastDetnum: Return the last detector number called.
-    Set_LastCut: Store the last cut called.
-    Get_LastCut: Return the last cut called.
-
 Created on Tue Nov  5 14:19:11 2013
 
 @author: tdoughty1
 """
+
+######################## Global Data Attributes ###############################
 
 _FileInfo = None
 _Detnums = None
 _LastDetnum = None
 _LastCut = None
 
-
+######################## Data Access Methods ##################################
 def Set_LastDetnum(detnum):
     ''' Store the last detector number called.
         
@@ -83,3 +87,15 @@ def Set_LastCut(cut):
 def Get_LastCut():
     ''' Return last cut called. '''
     return _LastCut
+
+def GetDataNames():
+    ''' Return list of data branch names in current session.'''
+    return _FileInfo.GetDataNames()
+
+def GetCutNames():
+    ''' Return list of cut branch names in current session.'''
+    return _FileInfo.GetCutNames()
+
+def IsGeneral(name):
+    ''' Checks if branch name is a general data or cut value.'''
+    return _FileInfo.IsGeneral()
