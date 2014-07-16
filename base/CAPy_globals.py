@@ -5,12 +5,14 @@ globals. py
 Module to keep track CAPy session settings.
 
 Functions:
-    Set_LastDetnum: Store the last detector number called.
-    Get_LastDetnum: Return the last detector number called.
-    Set_LastCut: Store the last cut called.
-    Get_LastCut: Return the last cut called.
-    GetDataNames: Return list of data branches in current session
-    GetCutNames: Return list of cut branches in current session
+    SetLastDetnum: Store the last detector number called.
+    GetLastDetnum: Return the last detector number called.
+    SetLastCut: Store the last cut called.
+    GetLastCut: Return the last cut called.
+    GetDataNames: Return list of data branches in current session.
+    GetCutNames: Return list of cut branches in current session.
+    IsGeneral: Checks if branch name is a general value.
+    GetDetnums: Return list of valid detector numbers.
 
 Attributes:
     _FileInfo (FileInfo) - Structure containing list of root files and branches
@@ -32,12 +34,11 @@ Created on Tue Nov  5 14:19:11 2013
 ######################## Global Data Attributes ###############################
 
 _FileInfo = None
-_Detnums = None
 _LastDetnum = None
 _LastCut = None
 
 ######################## Data Access Methods ##################################
-def Set_LastDetnum(detnum):
+def SetLastDetnum(detnum):
     ''' Store the last detector number called.
         
         Parameters:
@@ -54,19 +55,19 @@ def Set_LastDetnum(detnum):
                         'Detnum must be an integer!')
     
     # Detnum must be in expected range
-    if(detnum not in _Detnums):
+    if(detnum not in _FileInfo.GetDetnums):
         raise ValueError('ERROR in Set_LastDetnum:\n' +
                          'Detnum must be in the current detector list!')
     
     _LastDetnum = detnum
 
 
-def Get_LastDetnum():
+def GetLastDetnum():
     ''' Return last detector number called. '''
     return _LastDetnum
 
 
-def Set_LastCut(cut):
+def SetLastCut(cut):
     ''' Store the last detector number called.
         
         Parameters:
@@ -84,7 +85,7 @@ def Set_LastCut(cut):
     _LastCut = cut
 
 
-def Get_LastCut():
+def GetLastCut():
     ''' Return last cut called. '''
     return _LastCut
 
@@ -99,3 +100,7 @@ def GetCutNames():
 def IsGeneral(name):
     ''' Checks if branch name is a general data or cut value.'''
     return _FileInfo.IsGeneral()
+
+def GetDetnums():
+    ''' Return list of detector numbers in current session files.'''
+    return _FileInfo.GetDetnums()
