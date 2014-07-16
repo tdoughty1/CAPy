@@ -14,7 +14,7 @@ Created on Sun Nov  3 14:57:28 2013
 @author: tdoughty1
 """
 
-import globals
+import CAPy_globals
 
 
 class Data_Access(object):
@@ -42,8 +42,18 @@ class Data_Access(object):
                     it's standard data.
 
             Raises:
-                #TODO - Implement Type checking
+                TypeError: If expected types of arguments doesn't match given.
+                ValueError:
+                    - If name isn't key in the dict of data or cut branch names.
+                    - If isgeneral doesn't match the type determined from files.
+                    - If iscut doesn't match the type determinted from files.
         '''
+        
+        if not isinstance(name, str):
+            raise TypeError('ERROR in Data_Array():\n' +
+                            'Name must be a string!')
+
+        if name is in globals.fInfo
 
         self.__name__ = name
         self._isgeneral = isgeneral
@@ -60,8 +70,6 @@ class Data_Access(object):
         # First parse optional arguments (ie. detnum,cut)
         self._SetArgs(args)
 
-        # Next check if data is currently stored
-        # First check the Cut or DataBuffer
 
     # Standard Get Data function should be good for RQs and RRQs
     # Need to overwrite in Cut class
