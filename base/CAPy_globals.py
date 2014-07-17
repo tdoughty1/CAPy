@@ -55,7 +55,7 @@ def SetLastDetnum(detnum):
                         'Detnum must be an integer!')
     
     # Detnum must be in expected range
-    if(detnum not in _FileInfo.GetDetnums):
+    if(detnum not in _FileInfo.GetDetnums()):
         raise ValueError('ERROR in Set_LastDetnum:\n' +
                          'Detnum must be in the current detector list!')
     
@@ -99,7 +99,7 @@ def GetCutNames():
 
 def IsGeneral(name):
     ''' Checks if branch name is a general data or cut value.'''
-    return _FileInfo.IsGeneral()
+    return _FileInfo.IsGeneral(name)
 
 def GetDetnums():
     ''' Return list of detector numbers in current session files.'''
