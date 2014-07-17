@@ -10,7 +10,7 @@ from base.fileinfo import FileInfo
 from base.datatypes import Data_Function
 
 # Import Global session variables
-import CAPy_globals
+import base.CAPy_globals
 
 def Start_Session(fileList):
     
