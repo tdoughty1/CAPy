@@ -6,7 +6,7 @@ Created on Thu Jul 17 15:09:47 2014
 """
 
 # Import CAPy modules
-from base.fileInfo import FileInfo
+from base.fileinfo import FileInfo
 from base.datatypes import Data_Function
 
 # Import Global session variables
