@@ -5,12 +5,26 @@ Created on Thu Jul 17 15:09:47 2014
 @author: tdoughty1
 """
 
-from Tkinter import Tk
-from tkFileDialog import askopenfilename
+# Import CAPy modules
+from fileInfo import FileInfo
+from datatypes import Data_Function
 
+# Import Global session variables
+import CAPy_globals
 
-def Start_Session():
+def Start_Session(fileList):
     
-    Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
-    filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
-    print(filename)
+    f = open('fileList.txt','r')
+    files = f.readlines()
+    f.close()
+
+    CAPy_globals._FileInfo = FileInfo()    
+
+    try:
+        CAPy_globals._FileInfo.AddDataFiles(files)
+    except ValueError:
+        print "ERROR in CAPy.Start_Session:"
+        print "Unknown file in filelist."
+        return None
+
+    print "Successfully Loaded Data"
