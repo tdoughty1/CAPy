@@ -14,7 +14,7 @@ import base.CAPy_globals
 
 def Start_Session(fileList):
     
-    f = open('fileList.txt','r')
+    f = open(fileList,'r')
     files = f.readlines()
     f.close()
 
