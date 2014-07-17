@@ -183,11 +183,11 @@ class FileInfo(object):
     
     def GetDataNames(self):
         ''' Return list of data names in current session.'''
-        return self._DataInfo.keys()
+        return self._dataInfo.keys()
     
     def GetCutNames(self):
         ''' Return list of cut names in current session.'''
-        return self._CutInfo.keys()
+        return self._cutInfo.keys()
 
     def IsGeneral(self, name):
         ''' Return true if it's a general value, otherwise false.
