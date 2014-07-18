@@ -99,7 +99,7 @@ class Data_Function(object):
                  ' additional arguments.', UserWarning)
 
         # If it's not a valid detector number
-        if not Check_Detnum(args[0]):
+        if not self._Check_Detnum(args[0]):
         
             # Get Last Detector number
             detnum = CAPy_globals.GetLastDetnum
