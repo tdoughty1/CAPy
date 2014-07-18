@@ -17,6 +17,9 @@ Created on Sun Nov  3 14:57:28 2013
 # Import Standard Libraries
 from warnings import warn
 
+# Import ROOT Libraries
+from root_numpy import root2array
+
 # Import CAPy global settings
 import CAPy_globals
 
@@ -87,8 +90,10 @@ class Data_Function(object):
             warn('WARNING in ' + self.__name__ + ':\n\t' + self.__name__ + 
                  ' takes no arguments. Ignoring all arguments.', UserWarning)
 
+        files, dirName, treeName = CAPy_globals._FileInfo(self.__name__, 1)
+
         # Now call data
-        print '#TODO: Load Data for ' + self.__name__ + '() here!'
+        return root2array(files, dirName + '/' + treeName, [self.__name__])
 
     def _DetCut(self, args):
         ''' Loads the data for a detector specific cut.'''
@@ -142,12 +147,16 @@ class Data_Function(object):
             # Store Cut
             CAPy_globals.SetLastCut(cut)
 
+        files, dirName, treeName = CAPy_globals._FileInfo(self.__name__, 1)
+            
         # Now call data
+        m = root2array(files, dirName + '/' + treeName, [self.__name__])
+            
+        # If cut, apply
         if cut:
-            print '#TODO: Load Data for ' + self.__name__ + ' here!'
-        else:
-            print '#TODO: Load Data for ' + self.__name__ + '(cut)' + \
-                  ' here!'                
+            print "#TODO: Implement Cut"
+            
+        return m             
 
     def _DetData(self, args):
         ''' Loads the data for a detector specific value. '''
@@ -192,10 +201,17 @@ class Data_Function(object):
     
         # Now call data
         if detnum:
+            files, dirName, treeName = CAPy_globals._FileInfo(self.__name__, 1)
+            
+            # Now call data
+            m = root2array(files, dirName + '/' + treeName, [self.__name__])
+            
+            # If cut, apply
             if cut:
-                print '#TODO: Load Data for ' + self.__name__ + ' here!'
-            else:
-                print '#TODO: Load Data for ' + self.__name__ + '(cut) here!'
+                print "#TODO: Implement Cut"
+            
+            return m
+            
         else:
             warn('WARNING in ' + self.__name__ + ':\n\t' + 'No detector' +
                  ' given and none stored in globals. Returning nothing',
